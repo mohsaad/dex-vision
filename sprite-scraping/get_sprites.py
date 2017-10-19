@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # Mohammad Saad
 # 8/15/2015
-# Gets sprites of first 151 pokemon from the X/Y games and 
+# Gets sprites of first 151 pokemon from the X/Y games and
 # stores them in the aformentioned folder.
 
 import requests
@@ -13,15 +13,15 @@ import argparse
 class XYScraper:
 
 	# set up some initial class variables
-	def __init__(self, directory):
+	def __init__(self, directory, generation="xy"):
 
-		self.url = 'http://serebii.net/xy/pokemon/'
+		self.url = 'http://serebii.net/{0}/pokemon/'.format(generation)
 		self.curr_entry = 1
 		self.path = directory # set to your scraping directory
 
 	# grab an individual sprite
 	def grab_sprite(self, number):
-		number = number + '.png' # add png to make sure link works
+		number = number + '.gif' # add png to make sure link works
 		link = self.url + number # make total link
 		r = requests.get(link, stream = True)  # get the picture
 
@@ -42,7 +42,7 @@ class XYScraper:
 			return False
 
 		# print which sprite we grabbed
-		print "Sprite #{0} grabbed.".format(number) 
+		print "Sprite #{0} grabbed.".format(number)
 		return True
 
 	# now loop over and grab a bunch of them
@@ -58,9 +58,9 @@ class XYScraper:
 			res = self.grab_sprite(num)
 			if not res:
 				break # break out of loop if something happens (too many requests, etc.)
-			
+
 			self.curr_entry += 1 # iterate
-			time.sleep(5) # sleep to not overload server
+			time.sleep(1) # sleep to not overload server
 
 		print "All {0} sprites grabbed!".format(str(num_sprites))
 
@@ -71,9 +71,11 @@ class XYScraper:
 def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("directory", help = "directory to store sprites")
+	parser.add_argument("generation", help = "generation of sprite")
 	parser.add_argument("-n", "--number", help = "number of sprites to grab")
+
 	args = parser.parse_args()
-	xy = XYScraper(args.directory)
+	xy = XYScraper(args.directory, args.generation)
 	xy.grab_num_sprites(151)
 
 if __name__ == '__main__':
